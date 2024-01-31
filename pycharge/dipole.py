@@ -29,7 +29,7 @@ eps_0 = constants.epsilon_0
 c = constants.c
 e = constants.e
 m_e = constants.m_e
-
+hbar = constants.hbar
 
 class Dipole():
     r"""Oscillating dipole with a moment that is dependent on driving E field.
@@ -71,6 +71,8 @@ class Dipole():
         def fun_origin(t):
             return np.array((1e-10*np.cos(1e12*2*np.pi*t), 0, 0))
         ```
+        
+    This file setup the position, velocity and acceleration of charges in the dipole 
     """
 
     def __init__(
@@ -79,7 +81,7 @@ class Dipole():
             origin: Union[Tuple, Callable[[float], ndarray]],
             initial_r: Tuple[float, float, float],
             q: float = e,
-            m: Union[float, Tuple[float, float]] = m_e,
+            m: Union[float, Tuple[float, float]] = m_e, #hbar/(omega_0*magnitude_d**2),
     ) -> None:
         self.q = q
         # The mass parameter is either a list-like object or a float
@@ -87,8 +89,11 @@ class Dipole():
             self.m = m
         else:
             self.m = (m, m)
-        self.m_eff = self.m[0]*self.m[1]/(self.m[0]+self.m[1])
+    
         self.omega_0 = omega_0
+        self.m_eff = self.m[0]*self.m[1]/(self.m[0]+self.m[1]) # effective mass
+        # self.m_eff = self.m[0] # hbar/(2*self.omega_0*np.linalg.norm(initial_r[0])**2)
+        
         # The origin parameter is either a list-like object or a function
         if isinstance(origin, (ndarray, Iterable)):
             self.origin = self._origin_fun(np.array(origin))  # Function origin
@@ -108,8 +113,8 @@ class Dipole():
         self.gamma_0 = (1/(4*np.pi*eps_0)*2*self.q**2*self.omega_0**2
                         / (3*self.m_eff*c**3))
         self.charge_pair = (
-            self._DipoleCharge(self, True),
-            self._DipoleCharge(self, False)
+            self._DipoleCharge(self, True), # positive charge
+            self._DipoleCharge(self, False) # negative charge
         )
         # Attributes below are defined in the `reset` method
         self.t_index = None  # Stores the current time step during simulation
@@ -188,10 +193,31 @@ class Dipole():
         """
         if exclude_origin:
             return 0.5*self.m_eff*np.linalg.norm(self.moment_vel, axis=0)**2
-        charge_KE = (0.5*self.m_eff *
-                     np.linalg.norm(self.moment_vel, axis=0)**2)
-        return charge_KE  # Double KE since there are two charges
+        charge_KE = (0.5*self.m_eff*np.linalg.norm(self.moment_vel, axis=0)**2) # 1/2*m*|v|^2
+        return 2*charge_KE  # Double KE since there are two charges
+    
+    # def get_kinetic_energy(self,timesteps:int,alpha_m:float,w_m:float,exclude_origin: bool = True) -> ndarray:
+    #     """Return the kinetic energy of the dipole at each time step.
 
+    #     The kinetic energy of just the dipole moment can be determined by
+    #     excluding the kinetic energy from the origin's movement.
+
+    #     Args:
+    #         exclude_origin: Kinetic energy calculation excludes the movement of
+    #             the dipole's origin. Defaults to `True`.
+
+    #     Returns:
+    #         Kinetic energy at each time step.
+    #     """
+    #     if exclude_origin:
+    #         return 0.5*self.m_eff*np.linalg.norm(self.moment_vel, axis=0)**2
+        
+    #     mechanical_velocity= np.zeros((3,timesteps))
+    #     mechanical_velocity[0,:] = alpha_m*w_m/2/np.pi
+    #     charge_KE = (0.5*self.m_eff *
+    #                  np.linalg.norm(self.moment_vel+mechanical_velocity, axis=0)**2) # 1/2*m*|v|^2, this has exclude the origin motion
+    #     return charge_KE  # Double KE since there are two charges
+    
     def get_E_driving(self, field_type: str = 'Total') -> ndarray:
         """Return the magnitude of the driving electric field.
 
