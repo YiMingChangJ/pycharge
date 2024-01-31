@@ -174,11 +174,12 @@ class Simulation():
         E_y = np.zeros((x.shape))
         E_z = np.zeros((x.shape))
         for charge in self.all_charges:
+            # this will exclude the charges inside the dipole, and only consider the charges from other dipoles
             if exclude_charges is not None and charge in exclude_charges:
                 continue
             initial_guess = -1e-12*np.ones((x.shape))
             tr = optimize.newton(charge.solve_time, initial_guess,
-                                 args=(t_array, x, y, z), tol=self.tol)
+                                 args=(t_array, x, y, z), tol=self.tol) # retarded time is calculate by newton method
             E_field = self._calculate_individual_E(
                 charge, tr, x, y, z, pcharge_field)
             E_x += E_field[0]
@@ -358,12 +359,12 @@ class Simulation():
         r_dot_u = rx*ux + ry*uy + rz*uz
         r_dot_a = rx*ax + ry*ay + rz*az
         vel_mag = (vx**2 + vy**2 + vz**2)**0.5
-        # Griffiths Eq. 10.72
+        # Griffiths Eq. 10.72 (Coulumb electric field)
         const = charge.q/(4*pi*eps) * r_mag/(r_dot_u)**3
         xvel_field = const*(c**2-vel_mag**2)*ux
         yvel_field = const*(c**2-vel_mag**2)*uy
         zvel_field = const*(c**2-vel_mag**2)*uz
-        # Using triple product rule to simplify Eq. 10.72
+        # Using triple product rule to simplify Eq. 10.72 (radiation electric field)
         xacc_field = const*(r_dot_a*ux - r_dot_u*ax)
         yacc_field = const*(r_dot_a*uy - r_dot_u*ay)
         zacc_field = const*(r_dot_a*uz - r_dot_u*az)
