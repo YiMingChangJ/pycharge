@@ -7,6 +7,8 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/matthewfilipovich/pycharge/badge)](https://www.codefactor.io/repository/github/matthewfilipovich/pycharge)
 [![Documentation Status](https://readthedocs.org/projects/pycharge/badge/?version=latest)](https://pycharge.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/github/license/MatthewFilipovich/pycharge?color=blue)](https://github.com/MatthewFilipovich/pycharge/blob/master/LICENSE)
+[![DOI](https://zenodo.org/badge/406584509.svg)](https://zenodo.org/doi/10.5281/zenodo.10595249)
+
 
 <p align="center">
   <img width="300" src="https://raw.githubusercontent.com/MatthewFilipovich/pycharge/master/docs/figs/oscillating_charge.gif">
