@@ -19,6 +19,10 @@ hbar = constants.hbar
 def calculate_dipole_properties(
     dipole: Dipole,
     first_index: int,
+    timesteps: int,
+    alpha_m = 0,
+    w_m = 0,
+    exclude_origin: bool = True,
     plot: bool = False,
     print_values: bool = False
 ) -> Tuple[float, float]:
@@ -48,8 +52,7 @@ def calculate_dipole_properties(
     kinetic_energy = dipole.get_kinetic_energy()[first_index:]
     gamma_0 = dipole.gamma_0
     omega_0 = dipole.omega_0
-    t_array = dipole.dt*np.arange(first_index,
-                                  first_index+len(kinetic_energy))
+    t_array = dipole.dt*np.arange(first_index,first_index+len(kinetic_energy))
 
     # Initial curve fit guess for parameters use \gamma_0 and \omega_0.
     # pylint: disable=unbalanced-tuple-unpacking
@@ -109,7 +112,7 @@ def p_dipole_theory(
         print('Separation (lambda_0): ', d_12/lambda0)
         print('delta_12 p: ', delta_12p)
         print('gamma12 p: ', gamma12p)
-    return (delta_12p, gamma12p)
+    return (delta_12p, gamma12p, gamma_0)
 
 
 def s_dipole_theory(
@@ -147,4 +150,4 @@ def s_dipole_theory(
         print('Separation (lambda_0): ', d_12/lambda0)
         print('delta_12 s: ', delta_12s)
         print('gamma12 s: ', gamma12s)
-    return (delta_12s, gamma12s)
+    return (delta_12s, gamma12s, gamma_0)
