@@ -154,6 +154,120 @@ class Charge(ABC):
                 + (z-self.zpos(tr))**2)**0.5 - c*(t-tr)
 
 
+
+
+from scipy.constants import e
+from numpy import cos
+
+class ExampleCharge(Charge):
+
+    """
+    Charge object
+    """
+    def __init__(self,
+                 omega_0: float,
+                 xposition: float,
+                 amplitude: float,
+                 t_off: float,
+                 t_p: float,
+                 q: float,
+                 positive_charge: bool
+                 ):
+        super().__init__(q)
+        self.positive_charge = positive_charge
+        self.omega_0 = omega_0
+        self.amplitude = amplitude
+        self.t_off = t_off
+        self.t_p = t_p
+        self.xposition = xposition
+        self.h = 1e-20
+       
+    def xpos(self, t):
+        return self.xposition # 0.1*80e-9*np.sin(0.0007874621*self.omega_0*t) if we add the mechanical motion to the charges.
+
+    def ypos(self, t):
+        if self.positive_charge:
+            return self.amplitude*cos(self.omega_0*(t-self.t_off))*np.exp(-(t-self.t_off)**2/self.t_p**2)
+        else:
+            return -self.amplitude*cos(self.omega_0*(t-self.t_off))*np.exp(-(t-self.t_off)**2/self.t_p**2)
+    def zpos(self, t):
+        return 0 #self.amplitude*cos(self.omega_0*t)*np.exp(-(t-self.t_off)**2/self.t_p**2)
+    
+    def xvel(self, t: Union[ndarray, float]) -> Union[ndarray, float]:
+        """Return x velocity of the charge at specified array of times.
+
+        Args:
+            t: 3D meshgrid array of time values.
+
+        Returns:
+            x velocity at time values.
+        """
+        return (self.xpos(t+0.5*self.h)-self.xpos(t-0.5*self.h))/self.h
+
+    def yvel(self, t: Union[ndarray, float]) -> Union[ndarray, float]:
+        """Return y velocity of the charge at specified array of times.
+
+        Args:
+            t: 3D meshgrid array of time values.
+
+        Returns:
+            y velocity at time values.
+        """
+        return (self.ypos(t+0.5*self.h)-self.ypos(t-0.5*self.h))/self.h
+
+    def zvel(self, t: Union[ndarray, float]) -> Union[ndarray, float]:
+        """Return z velocity of the charge at specified array of times.
+
+        Args:
+            t: 3D meshgrid array of time values.
+
+        Returns:
+            z velocity at time values.
+        """
+        return (self.zpos(t+0.5*self.h)-self.zpos(t-0.5*self.h))/self.h
+
+    def xacc(self, t: Union[ndarray, float]) -> Union[ndarray, float]:
+        """Return x acceleration of the charge at specified array of times.
+
+        Args:
+            t: 3D meshgrid array of time values.
+
+        Returns:
+            x acceleration at time values.
+        """
+        return (self.xvel(t+0.5*self.h)-self.xvel(t-0.5*self.h))/self.h
+
+    def yacc(self, t: Union[ndarray, float]) -> Union[ndarray, float]:
+        """Return y acceleration of the charge at specified array of times.
+
+        Args:
+            t: 3D meshgrid array of time values.
+
+        Returns:
+            y acceleration at time values.
+        """
+        return (self.yvel(t+0.5*self.h)-self.yvel(t-0.5*self.h))/self.h
+
+    def zacc(self, t: Union[ndarray, float]) -> Union[ndarray, float]:
+        """Return z acceleration of the charge at specified array of times.
+
+        Args:
+            t: 3D meshgrid array of time values.
+
+        Returns:
+            z acceleration at time values.
+        """
+        return (self.zvel(t+0.5*self.h)-self.zvel(t-0.5*self.h))/self.h
+
+    def solve_time(
+        self, tr: ndarray, t: ndarray, x: ndarray, y: ndarray, z: ndarray
+    ) -> ndarray:
+        """Return equation to solve for the retarded time of the charge."""
+        # Griffiths Eq. 10.55
+        return ((x-self.xpos(tr))**2 + (y-self.ypos(tr))**2
+                + (z-self.zpos(tr))**2)**0.5 - c*(t-tr)
+    
+    
 class StationaryCharge(Charge):
     """Stationary point charge.
 
