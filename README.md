@@ -96,6 +96,23 @@ M. Filipovich and S. Hughes, [PyCharge: An open-source Python package for self-c
 simulations of Lorentz oscillators and moving point charges](https://arxiv.org/abs/2107.12437), arXiv:2107.12437.
 
 Y.M. Chang and K. Akbari and M. Filipovich and S. Hughes [Direct space-time modeling of mechanically dressed dipole-dipole interactions with electromagnetically coupled oscillating dipoles](https://journals.aps.org/pra/abstract/10.1103/bmm8-9pn6)
+
+```bibtex
+@article{bmm8-9pn6,
+  title = {Direct space-time modeling of mechanically dressed dipole-dipole interactions with electromagnetically coupled oscillating dipoles},
+  author = {Chang, Yi-Ming and Akbari, Kamran and Filipovich, Matthew and Hughes, Stephen},
+  journal = {Phys. Rev. A},
+  volume = {112},
+  issue = {3},
+  pages = {033530},
+  numpages = {16},
+  year = {2025},
+  month = {Sep},
+  publisher = {American Physical Society},
+  doi = {10.1103/bmm8-9pn6},
+  url = {https://link.aps.org/doi/10.1103/bmm8-9pn6}
+}
+```
 ## License
 
 PyCharge is distributed under the GNU GPLv3. See [LICENSE](https://github.com/MatthewFilipovich/pycharge/blob/master/LICENSE) for more information.
